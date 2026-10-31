@@ -19,7 +19,7 @@ function json(env: Env, body: unknown, status = 200): Response {
 
 async function profile(req: Request, env: Env): Promise<Response> {
   const username = parseUsername(new URL(req.url).searchParams.get("user") ?? "");
-  if (!username) return json(env, { error: "invalid_user", message: "Informe um username ou URL de trailblazer.me/id/..." }, 400);
+  if (!username) return json(env, { error: "invalid_user", message: "Informe um username ou URL de salesforce.com/trailblazer/..." }, 400);
   let res: Response;
   try {
     res = await fetch(profileUrl(username), {

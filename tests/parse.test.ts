@@ -6,9 +6,13 @@ describe("parseUsername", () => {
   it("accepts usernames and trailblazer.me URLs", () => {
     expect(parseUsername("maria-silva")).toBe("maria-silva");
     expect(parseUsername("https://www.trailblazer.me/id/maria-silva")).toBe("maria-silva");
+    expect(parseUsername("https://www.salesforce.com/trailblazer/laistorres")).toBe("laistorres");
+    expect(parseUsername("salesforce.com/trailblazer/laistorres/")).toBe("laistorres");
   });
   it("rejects other hosts", () => {
     expect(parseUsername("https://evil.com/id/x")).toBeNull();
+    expect(parseUsername("https://salesforce.com.evil.com/trailblazer/x")).toBeNull();
+    expect(parseUsername("https://www.salesforce.com/other/x")).toBeNull();
     expect(parseUsername("http://169.254.169.254/id/x")).toBeNull();
   });
 });

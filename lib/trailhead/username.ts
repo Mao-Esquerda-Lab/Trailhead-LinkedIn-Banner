@@ -1,7 +1,9 @@
-const HOSTS = new Set(["trailblazer.me", "www.trailblazer.me"]);
+const HOSTS = new Set(["trailblazer.me", "www.trailblazer.me", "salesforce.com", "www.salesforce.com"]);
 const USER_RE = /^[a-z0-9][a-z0-9._-]{1,63}$/i;
+// trailblazer.me/id/<user> (legacy), salesforce.com/trailblazer/<user> (current)
+const PATH_RE = /^\/(?:id|profile|trailblazer)\/([^/]+)\/?$/i;
 
-/** Accepts a bare username or a trailblazer.me/id/<user> URL. Returns null if invalid. */
+/** Accepts a bare username or a Trailblazer profile URL. Returns null if invalid. */
 export function parseUsername(input: string): string | null {
   const raw = input.trim();
   if (!raw) return null;
@@ -13,7 +15,7 @@ export function parseUsername(input: string): string | null {
       return null;
     }
     if (!HOSTS.has(url.hostname.toLowerCase())) return null;
-    const m = url.pathname.match(/^\/(?:id|profile)\/([^/]+)\/?$/i);
+    const m = url.pathname.match(PATH_RE);
     if (!m) return null;
     return USER_RE.test(m[1]) ? m[1] : null;
   }
@@ -21,5 +23,5 @@ export function parseUsername(input: string): string | null {
 }
 
 export function profileUrl(username: string): string {
-  return `https://www.trailblazer.me/id/${encodeURIComponent(username)}`;
+  return `https://www.salesforce.com/trailblazer/${encodeURIComponent(username)}`;
 }

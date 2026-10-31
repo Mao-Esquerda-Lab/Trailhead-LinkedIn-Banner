@@ -106,7 +106,7 @@ export default function BannerApp() {
       <section className="space-y-2 rounded-lg bg-white p-4 shadow">
         <h2 className="font-semibold">1. Conectar perfil</h2>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <input value={user} onChange={(e) => setUser(e.target.value)} placeholder="username ou https://www.trailblazer.me/id/seu-usuario" className="flex-1 rounded border px-3 py-2" />
+          <input value={user} onChange={(e) => setUser(e.target.value)} placeholder="username ou https://www.salesforce.com/trailblazer/seu-usuario" className="flex-1 rounded border px-3 py-2" />
           <button onClick={connect} disabled={!WORKER_URL || !user || status === "loading"} className="rounded bg-sky-600 px-4 py-2 text-white disabled:opacity-50">
             {status === "loading" ? "Importando…" : "Importar"}
           </button>

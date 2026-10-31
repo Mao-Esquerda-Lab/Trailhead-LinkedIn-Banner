@@ -2,7 +2,7 @@
 
 Gera um banner de LinkedIn (1584×396 PNG) com selos, badges Agentforce e certificações do Trailhead. Publicado como site estático no **GitHub Pages**.
 
-- Importa do **perfil público** `trailblazer.me/id/<user>` (sem login). Não existe API oficial; o parser (`lib/trailhead/parse.ts`) é best-effort e pode precisar de ajuste se o Trailhead mudar.
+- Importa do **perfil público** `salesforce.com/trailblazer/<user>` (ou o link antigo `trailblazer.me/id/<user>`) (sem login). Não existe API oficial; o parser (`lib/trailhead/parse.ts`) é best-effort e pode precisar de ajuste se o Trailhead mudar.
 - Fallback manual: escolha certificações do catálogo ou envie a imagem de qualquer selo.
 - Como o navegador não pode ler `trailblazer.me` direto (CORS), um **Cloudflare Worker** (`worker/`) faz a busca do perfil e o proxy das imagens.
 
