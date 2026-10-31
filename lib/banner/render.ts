@@ -1,3 +1,4 @@
+import { WORKER_URL } from "../config";
 import type { TrailItem } from "../trailhead/types";
 
 export const BANNER_W = 1584;
@@ -42,7 +43,7 @@ export function loadImage(src: string): Promise<HTMLImageElement | null> {
 
 /** Route remote artwork through our proxy so the canvas stays untainted. */
 export function proxied(src: string): string {
-  return src.startsWith("http") ? `/api/img?url=${encodeURIComponent(src)}` : src;
+  return src.startsWith("http") && WORKER_URL ? `${WORKER_URL}/img?url=${encodeURIComponent(src)}` : src;
 }
 
 function initials(title: string): string {

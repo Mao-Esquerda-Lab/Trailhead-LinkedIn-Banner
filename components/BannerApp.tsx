@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CERT_CATALOG } from "@/lib/catalog";
+import { WORKER_URL } from "@/lib/config";
 import { BANNER_H, BANNER_W, THEMES, drawBanner, loadImage, proxied } from "@/lib/banner/render";
 import type { ItemKind, TrailItem, TrailProfile } from "@/lib/trailhead/types";
 
@@ -38,7 +39,7 @@ export default function BannerApp() {
     setStatus("loading");
     setError("");
     try {
-      const res = await fetch(`/api/trailhead?user=${encodeURIComponent(user)}`);
+      const res = await fetch(`${WORKER_URL}/profile?user=${encodeURIComponent(user)}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message ?? "Falha ao importar.");
       const p = data as TrailProfile;
@@ -106,11 +107,12 @@ export default function BannerApp() {
         <h2 className="font-semibold">1. Conectar perfil</h2>
         <div className="flex flex-col gap-2 sm:flex-row">
           <input value={user} onChange={(e) => setUser(e.target.value)} placeholder="username ou https://www.trailblazer.me/id/seu-usuario" className="flex-1 rounded border px-3 py-2" />
-          <button onClick={connect} disabled={!user || status === "loading"} className="rounded bg-sky-600 px-4 py-2 text-white disabled:opacity-50">
+          <button onClick={connect} disabled={!WORKER_URL || !user || status === "loading"} className="rounded bg-sky-600 px-4 py-2 text-white disabled:opacity-50">
             {status === "loading" ? "Importando…" : "Importar"}
           </button>
         </div>
         <p className="text-sm text-slate-500">Seu perfil do Trailblazer precisa estar público. Não pedimos login nem senha.</p>
+        {!WORKER_URL && <p className="text-sm text-amber-600">Importação automática indisponível (proxy não configurado). Use a adição manual abaixo.</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
       </section>
 

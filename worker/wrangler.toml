@@ -1,0 +1,7 @@
+name = "trailhead-banner-proxy"
+main = "index.ts"
+compatibility_date = "2024-11-01"
+
+[vars]
+# Origin (no path) of the GitHub Pages site allowed to call this Worker.
+ALLOWED_ORIGIN = "https://mao-esquerda-lab.github.io"
