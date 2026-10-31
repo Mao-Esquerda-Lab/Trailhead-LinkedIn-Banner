@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CERT_CATALOG } from "@/lib/catalog";
 import { WORKER_URL } from "@/lib/config";
+import { CONSOLE_SNIPPET, parseScrapedJson } from "@/lib/trailhead/pageScrape";
 import { BANNER_H, BANNER_W, THEMES, drawBanner, loadImage, proxied } from "@/lib/banner/render";
 import type { ItemKind, TrailItem, TrailProfile } from "@/lib/trailhead/types";
 
@@ -55,6 +56,20 @@ export default function BannerApp() {
     } catch (e) {
       setStatus("error");
       setError(`${(e as Error).message} Você pode adicionar itens manualmente.`);
+    }
+  }
+
+  function importPasted(text: string) {
+    try {
+      const items = parseScrapedJson(text);
+      if (!items.length) throw new Error("Nenhum item encontrado no texto colado.");
+      setImported(items);
+      setError("");
+      setStatus("idle");
+      setSelected(items.filter((i) => i.kind !== "badge").slice(0, 10).map((i) => i.id));
+    } catch (e) {
+      setStatus("error");
+      setError((e as Error).message.startsWith("Nenhum") || (e as Error).message.startsWith("Formato") ? (e as Error).message : "Texto inválido: cole exatamente o que foi copiado pelo script.");
     }
   }
 
@@ -114,6 +129,7 @@ export default function BannerApp() {
         <p className="text-sm text-slate-500">Seu perfil do Trailblazer precisa estar público. Não pedimos login nem senha.</p>
         {!WORKER_URL && <p className="text-sm text-amber-600">Importação automática indisponível (proxy não configurado). Use a adição manual abaixo.</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
+        <PasteImport onImport={importPasted} />
       </section>
 
       <section className="space-y-3 rounded-lg bg-white p-4 shadow">
@@ -183,5 +199,41 @@ function ManualAdd({ kind, onAdd }: { kind: ItemKind; onAdd: (f: File, k: ItemKi
         }}
       />
     </div>
+  );
+}
+
+function PasteImport({ onImport }: { onImport: (text: string) => void }) {
+  const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
+  return (
+    <details className="rounded border p-3 text-sm">
+      <summary className="cursor-pointer font-medium">Importar pelo navegador (funciona mesmo quando a importação automática não acha nada)</summary>
+      <ol className="mt-2 list-decimal space-y-1 pl-5">
+        <li>Abra seu perfil público no Trailhead e expanda os grupos de certificações (e role até os selos, para carregarem).</li>
+        <li>Aperte F12 → aba <b>Console</b>. Se pedir, digite <code>allow pasting</code> e Enter.</li>
+        <li>
+          Copie o script abaixo, cole no Console e dê Enter.{" "}
+          <button
+            className="rounded bg-slate-100 px-2 py-0.5"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(CONSOLE_SNIPPET);
+                setCopied(true);
+              } catch {
+                /* clipboard unavailable: user can select the text below */
+              }
+            }}
+          >
+            {copied ? "Copiado!" : "Copiar script"}
+          </button>
+        </li>
+        <li>Volte aqui, cole o resultado (Ctrl+V) na caixa e clique em Usar.</li>
+      </ol>
+      <pre className="mt-2 max-h-24 overflow-auto rounded bg-slate-100 p-2 text-xs">{CONSOLE_SNIPPET}</pre>
+      <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Cole aqui o JSON copiado" className="mt-2 h-20 w-full rounded border p-2 text-xs" />
+      <button onClick={() => onImport(text)} disabled={!text.trim()} className="mt-1 rounded bg-sky-600 px-3 py-1 text-white disabled:opacity-50">
+        Usar
+      </button>
+    </details>
   );
 }

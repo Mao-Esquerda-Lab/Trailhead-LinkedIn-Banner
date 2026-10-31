@@ -30,3 +30,22 @@ describe("parseProfileHtml", () => {
     expect(p.items.map((i) => i.kind).sort()).toEqual(["agentforce", "badge", "certification"]);
   });
 });
+
+import { parseScrapedJson } from "@/lib/trailhead/pageScrape";
+
+describe("parseScrapedJson", () => {
+  it("classifies by section and drops junk", () => {
+    const items = parseScrapedJson(
+      JSON.stringify([
+        { title: "Agentforce Specialist", imageUrl: "https://x.com/a.png", section: "6 Certifications" },
+        { title: "Apex Basics", imageUrl: "https://x.com/b.png", section: "Badges" },
+        { title: "Agentforce Basics", imageUrl: "https://x.com/c.png", section: "Badges" },
+        { title: "Salesforce", imageUrl: "https://x.com/logo.svg", section: "" },
+      ]),
+    );
+    expect(items.map((i) => i.kind)).toEqual(["certification", "badge", "agentforce"]);
+  });
+  it("rejects non-lists", () => {
+    expect(() => parseScrapedJson("{}")).toThrow();
+  });
+});

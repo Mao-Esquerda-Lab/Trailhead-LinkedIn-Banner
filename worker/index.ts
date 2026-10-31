@@ -7,7 +7,7 @@ interface Env {
 }
 
 // Only Salesforce / Trailhead CDNs; keeps /img from becoming an open proxy (SSRF).
-const IMG_HOSTS = [/(^|\.)salesforce\.com$/, /(^|\.)trailhead\.com$/, /(^|\.)trailblazer\.me$/, /(^|\.)force\.com$/, /(^|\.)forceusercontent\.com$/];
+const IMG_HOSTS = [/(^|\.)salesforce\.com$/, /(^|\.)trailhead\.com$/, /(^|\.)trailblazer\.me$/, /(^|\.)force\.com$/, /(^|\.)forceusercontent\.com$/, /^res\.cloudinary\.com$/];
 
 function cors(env: Env): Record<string, string> {
   return { "access-control-allow-origin": env.ALLOWED_ORIGIN, vary: "origin" };
